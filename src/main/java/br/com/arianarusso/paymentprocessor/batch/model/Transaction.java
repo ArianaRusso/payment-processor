@@ -10,8 +10,8 @@ import java.util.UUID;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 @Builder
-
 public class Transaction {
 
     private UUID id;

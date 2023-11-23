@@ -2,6 +2,7 @@ package br.com.arianarusso.paymentprocessor.batch.config;
 
 import br.com.arianarusso.paymentprocessor.batch.model.Transaction;
 import org.springframework.batch.core.configuration.annotation.StepScope;
+import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourceProvider;
@@ -18,7 +19,11 @@ import org.springframework.core.io.ClassPathResource;
 import javax.sql.DataSource;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Configuration
 public class TransactionChunkConfig {
@@ -52,15 +57,41 @@ public class TransactionChunkConfig {
         };
     }
 
+//    @Bean
+//    @StepScope
+//    public ItemWriter<Transaction> writer(@Qualifier("appDataSource") DataSource dataSource){
+//        JdbcBatchItemWriter<Transaction> writer = new JdbcBatchItemWriter<>();
+//        writer.setDataSource(dataSource);
+//        writer.setSql("INSERT INTO transaction_batch (id, am" +
+//                "ount, timesstamp, receiver_id, sender_id) " +
+//                "VALUES (:id, :amount, :timesstamp, :receiver_id, :sender_id)");
+//        writer.setItemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<>());
+//        return writer;
+//    }
+
     @Bean
-    @StepScope
-    public ItemWriter<Transaction> writer(@Qualifier("appDataSource") DataSource dataSource){
-        JdbcBatchItemWriter<Transaction> writer = new JdbcBatchItemWriter<>();
-        writer.setDataSource(dataSource);
-        writer.setSql("INSERT INTO transaction_batch (id, am" +
-                "ount, timesstamp, receiver_id, sender_id) " +
-                "VALUES (:id, :amount, :timesstamp, :receiver_id, :sender_id)");
-        writer.setItemSqlParameterSourceProvider(new BeanPropertyItemSqlParameterSourceProvider<>());
-        return writer;
+    public ItemWriter<Transaction> writer() {
+       return writeOrdered();
     }
+
+    public ItemWriter<Transaction> writeOrdered() {
+        List<Transaction> sortedTransactions = new ArrayList<>();
+        return items -> {
+            for (Transaction item : items.getItems()) {
+                sortedTransactions.add(item);
+            }
+            sortedTransactions.sort((t1, t2) -> t1.getAmount().compareTo(t2.getAmount()));
+            //sortedTransactions.sort(Comparator.comparing(Transaction :: getAmount));
+            sortedTransactions.forEach(System.out::println);
+        };
+    }
+
+
+//    public ItemWriter<Transaction> writePrintConsole(){
+//        return itens -> itens.forEach(System.out::println);
+//
+//    }
+
+
+
 }
