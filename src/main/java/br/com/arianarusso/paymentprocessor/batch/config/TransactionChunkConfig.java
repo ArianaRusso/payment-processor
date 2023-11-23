@@ -71,7 +71,7 @@ public class TransactionChunkConfig {
 
     @Bean
     public ItemWriter<Transaction> writer() {
-       return writeOrdered();
+       return writeFilterAmount();
     }
 
     public ItemWriter<Transaction> writeOrdered() {
@@ -86,12 +86,35 @@ public class TransactionChunkConfig {
         };
     }
 
+    public ItemWriter<Transaction> writeMaxAmount() {
+        List<Transaction> transactions = new ArrayList<>();
+        return items -> {
+            for (Transaction item : items.getItems()) {
+                transactions.add(item);
+            }
+            Transaction transaction= transactions
+                    .stream()
+                    .max(Comparator.comparing(Transaction:: getAmount))
+                    .get();
+            System.out.println(transaction);
+        };
+    }
+    public ItemWriter<Transaction> writeFilterAmount() {
+        List<Transaction> transactions = new ArrayList<>();
+        return items -> {
+            for (Transaction item : items.getItems()) {
+                transactions.add(item);
+            }
+            List<Transaction> filteredTransactions = transactions.stream()
+                    .filter(t -> t.getAmount().compareTo(BigDecimal.valueOf(500)) > 0 )
+                    .collect(Collectors.toList());
+            filteredTransactions.forEach(System.out:: println);
+        };
+    }
 
-//    public ItemWriter<Transaction> writePrintConsole(){
-//        return itens -> itens.forEach(System.out::println);
-//
-//    }
+    public ItemWriter<Transaction> writePrintConsole(){
+        return itens -> itens.forEach(System.out::println);
 
-
+    }
 
 }
