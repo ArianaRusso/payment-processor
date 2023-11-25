@@ -12,8 +12,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import javax.sql.DataSource;
-
 @Configuration
 public class TransactionStepConfig {
 
@@ -25,19 +23,13 @@ public class TransactionStepConfig {
     @Autowired
     private PlatformTransactionManager transactionManager;
 
-    @Autowired
-    private DataSource dataSource;
-
 
     @Bean
-    public Step step (ItemWriter<Transaction> writer, ItemReader<Transaction> reader){
+    public Step step (ItemWriter<Transaction> writer, ItemReader<Transaction> readerTransaction){
         return new StepBuilder("step", this.jobRepository)
-                .<Transaction, Transaction>chunk(10, this.transactionManager)
-                .reader(reader)
+                .<Transaction, Transaction>chunk(2, this.transactionManager)
+                .reader(readerTransaction)
                 .writer(writer)
                 .build();
     }
-
-
-
 }
