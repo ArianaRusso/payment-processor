@@ -3,7 +3,6 @@ package br.com.arianarusso.paymentprocessor.batch.config;
 import br.com.arianarusso.paymentprocessor.batch.model.Transaction;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobExecutionListener;
-import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.annotation.AfterJob;
 import org.springframework.batch.core.annotation.BeforeJob;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +10,6 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,7 +23,7 @@ public class JobTransactionListener implements JobExecutionListener {
     private List<Transaction> collectedTransactions = new ArrayList<>();
 
     @Autowired
-    private TransactionItemWriter transactionItemWriter;
+    private TransactionWriter transactionItemWriter;
 
     @BeforeJob
     public void beforeJob(JobExecution jobExecution) {
