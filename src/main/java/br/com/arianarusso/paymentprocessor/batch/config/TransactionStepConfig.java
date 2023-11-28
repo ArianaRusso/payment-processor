@@ -25,7 +25,15 @@ public class TransactionStepConfig {
 
 
     @Bean
-    public Step step (ItemWriter<Transaction> writer, ItemReader<Transaction> readerTransaction){
+    public Step stepSalve (@Qualifier("jdbcWriter") ItemWriter<Transaction> writer,  @Qualifier ("readerFile") ItemReader<Transaction> readerTransaction){
+        return new StepBuilder("step", this.jobRepository)
+                .<Transaction, Transaction>chunk(2, this.transactionManager)
+                .reader(readerTransaction)
+                .writer(writer)
+                .build();
+    }
+    @Bean
+    public Step stepSalved (@Qualifier("writerConsole") ItemWriter<Transaction> writer, @Qualifier("jdbcCursorItemReader") ItemReader<Transaction> readerTransaction){
         return new StepBuilder("step", this.jobRepository)
                 .<Transaction, Transaction>chunk(2, this.transactionManager)
                 .reader(readerTransaction)

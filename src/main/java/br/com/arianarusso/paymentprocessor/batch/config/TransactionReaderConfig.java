@@ -21,29 +21,29 @@ import java.util.*;
 @Configuration
 public class TransactionReaderConfig {
 
-//    @Bean
-//    public ItemReader<Transaction> readerTransactions(){
-//        return new FlatFileItemReaderBuilder<Transaction>()
-//                .name("transactionItemReader")
-//                .resource(new ClassPathResource("transactions.txt"))
-//                .delimited()
-//                .names(new String []{"id", "amount", "timestamp", "receiver_id", "sender_id"})
-//                .fieldSetMapper(transactionFieldSetMapper())
-//                .build();
-//
-//    }
-//
-//    private FieldSetMapper<Transaction> transactionFieldSetMapper() {
-//        return fieldSet -> {
-//            Transaction transaction = new Transaction();
-//            transaction.setId(UUID.fromString(fieldSet.readString("id")));
-//            transaction.setAmount(new BigDecimal(fieldSet.readString("amount")));
-//            transaction.setTimesstamp(LocalDateTime.parse(fieldSet.readString("timestamp")));
-//            transaction.setReceiver_id(UUID.fromString(fieldSet.readString("receiver_id")));
-//            transaction.setSender_id(UUID.fromString(fieldSet.readString("sender_id")));
-//            return transaction;
-//        };
-//    }
+    @Bean
+    public ItemReader<Transaction> readerFile(){
+        return new FlatFileItemReaderBuilder<Transaction>()
+                .name("transactionItemReader")
+                .resource(new ClassPathResource("transactions.txt"))
+                .delimited()
+                .names(new String []{"id", "amount", "timestamp", "receiver_id", "sender_id"})
+                .fieldSetMapper(transactionFieldSetMapper())
+                .build();
+
+    }
+
+    private FieldSetMapper<Transaction> transactionFieldSetMapper() {
+        return fieldSet -> {
+            Transaction transaction = new Transaction();
+            transaction.setId(UUID.fromString(fieldSet.readString("id")));
+            transaction.setAmount(new BigDecimal(fieldSet.readString("amount")));
+            transaction.setTimesstamp(LocalDateTime.parse(fieldSet.readString("timestamp")));
+            transaction.setReceiver_id(UUID.fromString(fieldSet.readString("receiver_id")));
+            transaction.setSender_id(UUID.fromString(fieldSet.readString("sender_id")));
+            return transaction;
+        };
+    }
 
     @Bean
     public JdbcCursorItemReader<Transaction> jdbcCursorItemReader(
@@ -56,5 +56,5 @@ public class TransactionReaderConfig {
                 .build();
 
     }
-    
+
 }

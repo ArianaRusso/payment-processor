@@ -23,7 +23,7 @@ public class JobTransactionListener implements JobExecutionListener {
     private List<Transaction> collectedTransactions = new ArrayList<>();
 
     @Autowired
-    private TransactionWriter transactionItemWriter;
+    private TransactionWriterConfig transactionItemWriter;
 
     @BeforeJob
     public void beforeJob(JobExecution jobExecution) {
