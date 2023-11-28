@@ -33,7 +33,7 @@ public class TransactionStepConfig {
                 .build();
     }
     @Bean
-    public Step stepSalved (@Qualifier("writerConsole") ItemWriter<Transaction> writer, @Qualifier("jdbcCursorItemReader") ItemReader<Transaction> readerTransaction){
+    public Step stepSalved (@Qualifier("writerConsole") ItemWriter<Transaction> writer, @Qualifier("jdbcPagingReader") ItemReader<Transaction> readerTransaction){
         return new StepBuilder("step", this.jobRepository)
                 .<Transaction, Transaction>chunk(2, this.transactionManager)
                 .reader(readerTransaction)
