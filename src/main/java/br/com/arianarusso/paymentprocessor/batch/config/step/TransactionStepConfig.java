@@ -46,8 +46,8 @@ public class TransactionStepConfig {
 
     @Bean
     public Step stepCreateFile (
-            @Qualifier("fileTransactionWriter") ItemWriter<Transaction> writer,
-            @Qualifier("jdbcCursorReader") ItemReader<Transaction> readerTransaction){
+            @Qualifier("compositeTransactionWriter") ItemWriter<Transaction> writer,
+            @Qualifier("readerFile") ItemReader<Transaction> readerTransaction){
         return new StepBuilder("step", this.jobRepository)
                 .<Transaction, Transaction>chunk(2, this.transactionManager)
                 .reader(readerTransaction)
