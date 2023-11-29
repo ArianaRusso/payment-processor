@@ -14,9 +14,14 @@ import org.springframework.context.annotation.Configuration;
 public class TransactionJobConfig {
 
     @Bean
-    public Job job(@Qualifier("stepCreateFile") Step step, JobRepository jobRepository, JobTransactionListener listener) {
+    public Job job(
+            @Qualifier("stepSave") Step stepFileSave,
+            @Qualifier("stepCreateFile") Step stepCreateFile,
+            JobRepository jobRepository,
+            JobTransactionListener listener) {
         return new JobBuilder("transaction-job", jobRepository)
-                .start(step)
+                .start(stepFileSave)
+                .next(stepCreateFile)
                 .incrementer(new RunIdIncrementer())
                 .listener(listener)
                 .build();

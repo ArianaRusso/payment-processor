@@ -28,7 +28,7 @@ public class TransactionStepConfig {
     public Step stepSave (@Qualifier("jdbcWriter") ItemWriter<Transaction> writer,
                            @Qualifier ("readerFile") ItemReader<Transaction> readerTransaction){
         return new StepBuilder("step", this.jobRepository)
-                .<Transaction, Transaction>chunk(2, this.transactionManager)
+                .<Transaction, Transaction>chunk(100, this.transactionManager)
                 .reader(readerTransaction)
                 .writer(writer)
                 .build();
@@ -38,7 +38,7 @@ public class TransactionStepConfig {
             @Qualifier("writerConsole") ItemWriter<Transaction> writer,
             @Qualifier("jdbcCursorReader") ItemReader<Transaction> readerTransaction){
         return new StepBuilder("step", this.jobRepository)
-                .<Transaction, Transaction>chunk(2, this.transactionManager)
+                .<Transaction, Transaction>chunk(100, this.transactionManager)
                 .reader(readerTransaction)
                 .writer(writer)
                 .build();
@@ -46,10 +46,21 @@ public class TransactionStepConfig {
 
     @Bean
     public Step stepCreateFile (
+            @Qualifier("fileTransactionWriter") ItemWriter<Transaction> writer,
+            @Qualifier("jdbcCursorReader") ItemReader<Transaction> readerTransaction){
+        return new StepBuilder("step", this.jobRepository)
+                .<Transaction, Transaction>chunk(100, this.transactionManager)
+                .reader(readerTransaction)
+                .writer(writer)
+                .build();
+    }
+
+    @Bean
+    public Step stepComposite (
             @Qualifier("compositeTransactionWriter") ItemWriter<Transaction> writer,
             @Qualifier("readerFile") ItemReader<Transaction> readerTransaction){
         return new StepBuilder("step", this.jobRepository)
-                .<Transaction, Transaction>chunk(2, this.transactionManager)
+                .<Transaction, Transaction>chunk(100, this.transactionManager)
                 .reader(readerTransaction)
                 .writer(writer)
                 .build();

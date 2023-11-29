@@ -16,7 +16,7 @@ public class TransactionFileGenerator {
 
     private static void generateTestFile() {
         try (FileWriter writer = new FileWriter("transactions.txt")) {
-            for (int i = 1; i <= 10; i++) {
+            for (int i = 1; i <= 1000; i++) {
                 Transaction transaction = generateRandomTransaction(i);
                 writer.write(transactionToString(transaction));
                 writer.write(System.lineSeparator());
