@@ -1,5 +1,6 @@
-package br.com.arianarusso.paymentprocessor.batch.config;
+package br.com.arianarusso.paymentprocessor.batch.config.job;
 
+import br.com.arianarusso.paymentprocessor.batch.config.listener.JobTransactionListener;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.job.builder.JobBuilder;
@@ -13,11 +14,12 @@ import org.springframework.context.annotation.Configuration;
 public class TransactionJobConfig {
 
     @Bean
-    public Job job(@Qualifier("stepSalved") Step step, JobRepository jobRepository, JobTransactionListener listener) {
+    public Job job(@Qualifier("stepCreateFile") Step step, JobRepository jobRepository, JobTransactionListener listener) {
         return new JobBuilder("transaction-job", jobRepository)
                 .start(step)
                 .incrementer(new RunIdIncrementer())
                 .listener(listener)
                 .build();
     }
+
 }

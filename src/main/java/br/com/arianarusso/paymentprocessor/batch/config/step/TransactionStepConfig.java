@@ -1,4 +1,4 @@
-package br.com.arianarusso.paymentprocessor.batch.config;
+package br.com.arianarusso.paymentprocessor.batch.config.step;
 
 import br.com.arianarusso.paymentprocessor.batch.model.Transaction;
 import org.springframework.batch.core.Step;
@@ -25,7 +25,8 @@ public class TransactionStepConfig {
 
 
     @Bean
-    public Step stepSalve (@Qualifier("jdbcWriter") ItemWriter<Transaction> writer,  @Qualifier ("readerFile") ItemReader<Transaction> readerTransaction){
+    public Step stepSave (@Qualifier("jdbcWriter") ItemWriter<Transaction> writer,
+                           @Qualifier ("readerFile") ItemReader<Transaction> readerTransaction){
         return new StepBuilder("step", this.jobRepository)
                 .<Transaction, Transaction>chunk(2, this.transactionManager)
                 .reader(readerTransaction)
@@ -33,7 +34,20 @@ public class TransactionStepConfig {
                 .build();
     }
     @Bean
-    public Step stepSalved (@Qualifier("writerConsole") ItemWriter<Transaction> writer, @Qualifier("jdbcPagingReader") ItemReader<Transaction> readerTransaction){
+    public Step printSaved (
+            @Qualifier("writerConsole") ItemWriter<Transaction> writer,
+            @Qualifier("jdbcCursorReader") ItemReader<Transaction> readerTransaction){
+        return new StepBuilder("step", this.jobRepository)
+                .<Transaction, Transaction>chunk(2, this.transactionManager)
+                .reader(readerTransaction)
+                .writer(writer)
+                .build();
+    }
+
+    @Bean
+    public Step stepCreateFile (
+            @Qualifier("fileTransactionWriter") ItemWriter<Transaction> writer,
+            @Qualifier("jdbcCursorReader") ItemReader<Transaction> readerTransaction){
         return new StepBuilder("step", this.jobRepository)
                 .<Transaction, Transaction>chunk(2, this.transactionManager)
                 .reader(readerTransaction)

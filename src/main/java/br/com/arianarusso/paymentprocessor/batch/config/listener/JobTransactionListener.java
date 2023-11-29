@@ -1,5 +1,6 @@
-package br.com.arianarusso.paymentprocessor.batch.config;
+package br.com.arianarusso.paymentprocessor.batch.config.listener;
 
+import br.com.arianarusso.paymentprocessor.batch.config.writer.ConsoleWriterConfig;
 import br.com.arianarusso.paymentprocessor.batch.model.Transaction;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobExecutionListener;
@@ -23,7 +24,7 @@ public class JobTransactionListener implements JobExecutionListener {
     private List<Transaction> collectedTransactions = new ArrayList<>();
 
     @Autowired
-    private TransactionWriterConfig transactionItemWriter;
+    private ConsoleWriterConfig transactionItemWriter;
 
     @BeforeJob
     public void beforeJob(JobExecution jobExecution) {
