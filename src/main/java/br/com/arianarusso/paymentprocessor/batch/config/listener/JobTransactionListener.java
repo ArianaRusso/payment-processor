@@ -18,8 +18,8 @@ import java.util.stream.Collectors;
 @Component
 public class JobTransactionListener implements JobExecutionListener {
 
-    private static String START_MESSAGE = "%s is beginning execution";
-    private static String END_MESSAGE = "%s has completed with the status %s";
+    private static final String START_MESSAGE = "%s is beginning execution";
+    private static final String END_MESSAGE = "%s has completed with the status %s";
 
     private List<Transaction> collectedTransactions = new ArrayList<>();
 
@@ -28,8 +28,8 @@ public class JobTransactionListener implements JobExecutionListener {
 
     @BeforeJob
     public void beforeJob(JobExecution jobExecution) {
-        System.out.println(String.format(START_MESSAGE,
-                jobExecution.getJobInstance().getJobName()));
+        System.out.printf((START_MESSAGE) + "%n",
+                jobExecution.getJobInstance().getJobName());
     }
     @AfterJob
     public void afterJob(JobExecution jobExecution) {
@@ -40,10 +40,9 @@ public class JobTransactionListener implements JobExecutionListener {
         writeOrdered();
         writeFilterAmount();
 
-        System.out.println(
-                String.format(END_MESSAGE,
-                        jobExecution.getJobInstance().getJobName(),
-                        jobExecution.getStatus()));
+        System.out.printf((END_MESSAGE) + "%n",
+                jobExecution.getJobInstance().getJobName(),
+                jobExecution.getStatus());
     }
 
     private void writePrintConsole() {
@@ -60,8 +59,8 @@ public class JobTransactionListener implements JobExecutionListener {
     };
 
     private void writeOrdered() {
-        collectedTransactions.sort((t1, t2) -> t1.getAmount().compareTo(t2.getAmount()));
-        //sortedTransactions.sort(Comparator.comparing(Transaction :: getAmount));
+        //collectedTransactions.sort((t1, t2) -> t1.getAmount().compareTo(t2.getAmount()));
+        collectedTransactions.sort(Comparator.comparing(Transaction :: getAmount));
         System.out.println("Transações ordenadas por valor:");
         collectedTransactions.forEach(System.out::println);
     };
@@ -69,11 +68,11 @@ public class JobTransactionListener implements JobExecutionListener {
 
     public void writeFilterAmount() {
         List<Transaction> filteredTransactions = collectedTransactions.stream()
-                .filter(t -> t.getAmount().compareTo(BigDecimal.valueOf(500)) > 0)
-                .collect(Collectors.toList());
+                .filter(t -> t.getAmount().compareTo(BigDecimal.valueOf(500)) > 0).toList();
 
         System.out.println("Transações com valor superior a 500:");
         filteredTransactions.forEach(System.out::println);
+        //filteredTransactions.forEach(transaction -> System.out.println(transaction));
     };
 
 }
